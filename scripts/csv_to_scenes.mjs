@@ -15,6 +15,13 @@ XLSX.set_fs(fs); // ESM版はfsを明示的に渡さないと readFile/writeFile
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 import {assetsDir as assets} from './media_config.mjs';
 
+// BGM(audio/party-bgm.m4a = 教授就任パーティ_BGM_改訂版)の実測値。
+// ffmpeg -af silencedetect=noise=-50dB で計測:
+//   ファイル尺 306.72秒 / 音楽は 302.47秒 で鳴り終わり、以降は無音。
+// ムービーの総尺はこのファイル尺に固定する。
+const BGM_DURATION_SEC = 306.72;
+const BGM_MUSIC_END_SEC = 302.47;
+
 // --- 最小限のCSVパーサ(引用符・改行・CRLF・BOM対応) ---
 const parseCsv = (text) => {
   const rows = [];
@@ -69,6 +76,27 @@ const col = (name) => {
 const cOrder = col('順番'), cKind = col('種別'), cFolder = col('フォルダ'),
       cFile = col('ファイル名'), cDur = col('秒数'), cSepia = col('セピア'),
       cCaption = col('キャプション');
+// 「切り替え」列は後から足したので、無い表でも動くよう任意扱いにする
+const cTransition = header.indexOf('切り替え');
+
+// 「切り替え」列に書ける値。空欄はフェード(既定)。
+// シェーダーを使う効果(dissolve/film-burn/ripple など)は HTML-in-Canvas API が必要で
+// 実行時に落ちるため、あえて選べないようにしている。
+const TRANSITIONS = {
+  'スライド左': 'slide-left',
+  'スライド右': 'slide-right',
+  'スライド上': 'slide-up',
+  'スライド下': 'slide-down',
+  'ワイプ左': 'wipe-left',
+  'ワイプ右': 'wipe-right',
+  'ワイプ上': 'wipe-up',
+  'ワイプ下': 'wipe-down',
+  'めくり': 'flip',
+  '時計': 'clock',
+  'アイリス': 'iris',
+  'なし': 'none',
+  'フェード': '', // 既定と同じ。明示したい場合用
+};
 
 const cell = (r, i) => String(r[i] ?? '').trim(); // 行が短い場合も安全に読む
 
@@ -88,6 +116,16 @@ const scenes = entries.map(({order, r}) => {
   const s = {kind: cell(r, cKind) === 'slide' ? 'slide' : 'photo', src: `assets/${folder}/${file}`, dur};
   if (cell(r, cSepia)) s.sepia = true;
   if (cell(r, cCaption)) s.caption = cell(r, cCaption);
+  const tr = cTransition === -1 ? '' : cell(r, cTransition);
+  if (tr) {
+    if (!(tr in TRANSITIONS)) {
+      errors.push(
+        `順番${order}: 切り替え「${tr}」は使えません → ${Object.keys(TRANSITIONS).join(' / ')} のどれか(空欄はフェード)`
+      );
+    } else if (TRANSITIONS[tr]) {
+      s.transition = TRANSITIONS[tr];
+    }
+  }
   return s;
 });
 
@@ -99,12 +137,20 @@ if (errors.length) {
 
 const headerTs = `// 自動生成: scripts/csv_to_scenes.mjs (${new Date().toISOString().slice(0, 10)})
 // 並び替え・差し替えは scenes.csv を編集して node scripts/csv_to_scenes.mjs を実行。
+// 切り替えの種類。シェーダー系(dissolve/film-burn/ripple 等)は HTML-in-Canvas API が
+// 必要で実行時に落ちるため、ここには含めていない。
+export type TransitionName =
+  | 'slide-left' | 'slide-right' | 'slide-up' | 'slide-down'
+  | 'wipe-left' | 'wipe-right' | 'wipe-up' | 'wipe-down'
+  | 'flip' | 'clock' | 'iris' | 'none';
+
 export type Scene = {
   kind: 'slide' | 'photo';
   src: string;
   dur: number; // 秒
   sepia?: boolean;
   caption?: string;
+  transition?: TransitionName; // このシーンに入るときの切り替え(未指定はフェード)
 };
 
 export const FPS = 30;
@@ -116,7 +162,19 @@ const footerTs = `;
 
 export const TRANSITION_FRAMES = Math.round(TRANSITION_SEC * FPS);
 export const sceneFrames = (s: Scene) => Math.round(s.dur * FPS);
-export const totalDurationInFrames =
+
+// BGM(audio/party-bgm.m4a)の実測値。
+// ffmpeg -af silencedetect=noise=-50dB で計測:
+//   ファイル尺 306.72秒 / 音楽が鳴り終わるのは 302.47秒(以降は無音)
+export const BGM_DURATION_SEC = ${BGM_DURATION_SEC};
+export const BGM_MUSIC_END_SEC = ${BGM_MUSIC_END_SEC};
+
+// ムービーの総尺は曲の長さに固定する。写真を足し引きしても尺は変わらない。
+export const totalDurationInFrames = Math.round(BGM_DURATION_SEC * FPS);
+
+// 写真を並べた実際の長さ。totalDurationInFrames とズレていると
+// 末尾が黒くなる(短い)か切れる(長い)ので、update 実行時に警告する。
+export const scenesDurationInFrames =
   scenes.reduce((sum, s) => sum + sceneFrames(s), 0) -
   TRANSITION_FRAMES * (scenes.length - 1);
 `;
@@ -126,23 +184,16 @@ writeFileSync(
   headerTs + JSON.stringify(scenes, null, 2) + footerTs
 );
 
-// --- 総尺と「たしかなこと」の入りをチェック ---
-// 曲Bは自然な終わりがムービーの終わりに揃うよう途中から再生するので、
-// 総尺が変わると曲Bの入り位置がそのぶんズレる(総尺 = 曲B開始 + 残りの曲尺)。
-// 「曲の1:39.0から入る」を目標にする。
+// --- 写真の合計尺が曲の長さに合っているかチェック ---
+// ムービーの総尺は曲(audio/party-bgm.m4a)の長さに固定してあるので、
+// 写真の合計がこれとズレると末尾が黒くなる(短い)か切れる(長い)。
 const FPS = 30; // scenes.ts の FPS と同じ値
 const TRANSITION_SEC = 0.7; // クロスフェード(scenes.ts と同じ値)
-const BSTART_SEC = 125; // Bgm.tsx: CROSSFADE_AT_SEC(128) - CROSSFADE_SEC(3)
-// 曲Bはファイル実尺301.56秒のうち末尾3.52秒が無音。音楽が鳴り終わる298.05秒を
-// ムービーの終わりに合わせているので、こちらを基準に計算する(Bgm.tsx と同じ値)。
-const SONG_B_MUSIC_END_SEC = 298.05;
-const TARGET_ENTRY_SEC = 99.0; // たしかなこと の入り(目標 1:39.0)
-const TARGET_TOTAL_SEC = BSTART_SEC + (SONG_B_MUSIC_END_SEC - TARGET_ENTRY_SEC); // = 324.05
+const TARGET_TOTAL_SEC = BGM_DURATION_SEC;
 
 const frames = scenes.reduce((a, s) => a + Math.round(s.dur * FPS), 0) -
   Math.round(TRANSITION_SEC * FPS) * (scenes.length - 1);
 const total = frames / FPS;
-const entry = SONG_B_MUSIC_END_SEC - (total - BSTART_SEC);
 const mmss = (t) => {
   const d = Math.round(t * 10);
   return `${Math.floor(d / 600)}:${String(Math.floor(d / 10) % 60).padStart(2, '0')}.${d % 10}`;
@@ -152,15 +203,15 @@ console.log(
   `[${useXlsx ? 'scenes.xlsx' : 'scenes.csv'}] → ` +
     `scenes.ts 更新完了: ${scenes.length}シーン ` +
     `(photo ${scenes.filter((s) => s.kind === 'photo').length} / slide ${scenes.filter((s) => s.kind === 'slide').length}), ` +
-    `総尺 ${mmss(total)} (${total.toFixed(2)}s / ${frames}フレーム)`
+    `写真の合計 ${mmss(total)} (${total.toFixed(2)}s / ${frames}フレーム)`
 );
-console.log(`たしかなことの入り: 曲の ${mmss(entry)}  (目標 ${mmss(TARGET_ENTRY_SEC)})`);
+console.log(`ムービー総尺は曲の長さ ${mmss(TARGET_TOTAL_SEC)} に固定`);
 
 const diff = total - TARGET_TOTAL_SEC;
 if (Math.abs(diff) < 0.05) {
-  console.log(`✅ 目標総尺 ${mmss(TARGET_TOTAL_SEC)} ぴったりです`);
+  console.log(`✅ 曲の長さ ${mmss(TARGET_TOTAL_SEC)} ぴったりです`);
 } else if (diff > 0) {
-  console.log(`⚠️  目標より ${diff.toFixed(2)}秒 長い → 秒数を詰めるか写真を減らす`);
+  console.log(`⚠️  曲より ${diff.toFixed(2)}秒 長い → 末尾が切れます。秒数を詰めるか写真を減らす`);
 } else {
   const room = -diff;
   console.log(`📷 あと ${room.toFixed(2)}秒ぶん空いています → 写真を追加できます`);

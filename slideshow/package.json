@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "studio": "remotion studio",
-    "render": "remotion render Movie ../../../../教授就任パーティー用動画/output/wakamatsu_movie.mp4 --codec h264 --hardware-acceleration if-possible",
-    "render:hq": "remotion render Movie ../../../../教授就任パーティー用動画/output/wakamatsu_movie_CRF23.mp4 --codec h264 --crf 23 --hardware-acceleration if-possible",
-    "render:line": "ffmpeg -y -i ../../../../教授就任パーティー用動画/output/wakamatsu_movie_CRF23.mp4 -vf scale=1280:-2 -c:v h264_nvenc -rc vbr -cq 30 -b:v 0 -c:a copy ../../../../教授就任パーティー用動画/output/wakamatsu_movie_LINE.mp4",
+    "render": "node scripts/render.mjs movie",
+    "render:hq": "node scripts/render.mjs hq",
+    "render:line": "node scripts/render.mjs line",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

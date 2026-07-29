@@ -1,11 +1,19 @@
-// 自動生成: scripts/csv_to_scenes.mjs (2026-07-28)
+// 自動生成: scripts/csv_to_scenes.mjs (2026-07-29)
 // 並び替え・差し替えは scenes.csv を編集して node scripts/csv_to_scenes.mjs を実行。
+// 切り替えの種類。シェーダー系(dissolve/film-burn/ripple 等)は HTML-in-Canvas API が
+// 必要で実行時に落ちるため、ここには含めていない。
+export type TransitionName =
+  | 'slide-left' | 'slide-right' | 'slide-up' | 'slide-down'
+  | 'wipe-left' | 'wipe-right' | 'wipe-up' | 'wipe-down'
+  | 'flip' | 'clock' | 'iris' | 'none';
+
 export type Scene = {
   kind: 'slide' | 'photo';
   src: string;
   dur: number; // 秒
   sepia?: boolean;
   caption?: string;
+  transition?: TransitionName; // このシーンに入るときの切り替え(未指定はフェード)
 };
 
 export const FPS = 30;
@@ -19,8 +27,8 @@ export const scenes: Scene[] = [
   },
   {
     "kind": "photo",
-    "src": "assets/add/2013年前期後期から斎藤登場.jpg",
-    "dur": 6
+    "src": "assets/addition2/IMG_6266.jpg",
+    "dur": 5
   },
   {
     "kind": "slide",
@@ -30,33 +38,33 @@ export const scenes: Scene[] = [
   {
     "kind": "photo",
     "src": "assets/collage/16.jpg",
-    "dur": 6
+    "dur": 5
   },
   {
     "kind": "slide",
     "src": "assets/add/3開院.jpg",
-    "dur": 6
+    "dur": 5
   },
   {
     "kind": "slide",
     "src": "assets/slides/04-kono-hi-kara.jpg",
-    "dur": 6
+    "dur": 5
   },
   {
     "kind": "photo",
     "src": "assets/add/2015三月.jpg",
-    "dur": 6,
+    "dur": 5,
     "sepia": true
   },
   {
     "kind": "slide",
     "src": "assets/slides/03-kaiin-toji.jpg",
-    "dur": 6
+    "dur": 5
   },
   {
     "kind": "photo",
     "src": "assets/add/2015年前期.jpg",
-    "dur": 6
+    "dur": 5
   },
   {
     "kind": "slide",
@@ -66,18 +74,24 @@ export const scenes: Scene[] = [
   {
     "kind": "photo",
     "src": "assets/history/9be842d9.jpg",
-    "dur": 6,
+    "dur": 5,
     "sepia": true
   },
   {
     "kind": "photo",
     "src": "assets/add/IMG_2374.jpg",
-    "dur": 6
+    "dur": 5
   },
   {
     "kind": "slide",
     "src": "assets/slides/05-manabiya-title.jpg",
-    "dur": 6
+    "dur": 5,
+    "transition": "iris"
+  },
+  {
+    "kind": "photo",
+    "src": "assets/collage/01.jpg",
+    "dur": 5
   },
   {
     "kind": "slide",
@@ -86,8 +100,18 @@ export const scenes: Scene[] = [
   },
   {
     "kind": "photo",
-    "src": "assets/collage/01.jpg",
-    "dur": 6
+    "src": "assets/collage/03.jpg",
+    "dur": 5
+  },
+  {
+    "kind": "slide",
+    "src": "assets/addition2/スクリーンショット_2026-07-28_16.14.39.jpg",
+    "dur": 5
+  },
+  {
+    "kind": "photo",
+    "src": "assets/collage/15.jpg",
+    "dur": 5
   },
   {
     "kind": "slide",
@@ -96,78 +120,64 @@ export const scenes: Scene[] = [
   },
   {
     "kind": "photo",
-    "src": "assets/collage/03.jpg",
-    "dur": 6
-  },
-  {
-    "kind": "photo",
-    "src": "assets/collage/15.jpg",
-    "dur": 6
-  },
-  {
-    "kind": "photo",
     "src": "assets/or/cache_Messagep8464.jpg",
-    "dur": 6
+    "dur": 5
   },
   {
     "kind": "photo",
     "src": "assets/bridge/IMG_0305.jpg",
-    "dur": 6
+    "dur": 5
   },
   {
     "kind": "photo",
     "src": "assets/or/IMG_2953.jpg",
-    "dur": 6
+    "dur": 5
   },
   {
     "kind": "photo",
     "src": "assets/or/IMG_8659.jpg",
-    "dur": 6
+    "dur": 5
   },
   {
     "kind": "photo",
     "src": "assets/or/IMG_9883.jpg",
-    "dur": 6
+    "dur": 5
   },
   {
     "kind": "photo",
     "src": "assets/gairai/IMG_0403.jpg",
-    "dur": 6
+    "dur": 5
   },
   {
     "kind": "photo",
     "src": "assets/gairai/IMG_3154.jpg",
-    "dur": 6
+    "dur": 5
   },
   {
     "kind": "photo",
     "src": "assets/byoto/IMG_9875.jpg",
-    "dur": 6
-  },
-  {
-    "kind": "photo",
-    "src": "assets/rehab/7F793CFB-7E3D-427D-A2B9-7F48876F8894.jpg",
-    "dur": 6
+    "dur": 5
   },
   {
     "kind": "photo",
     "src": "assets/ikyoku/IMG_0108.jpg",
-    "dur": 6
+    "dur": 3.42
   },
   {
     "kind": "photo",
     "src": "assets/collage/04.jpg",
-    "dur": 6
+    "dur": 5
   },
   {
     "kind": "slide",
     "src": "assets/slides/12-sakai.jpg",
-    "dur": 6
+    "dur": 7,
+    "transition": "wipe-right"
   },
   {
     "kind": "photo",
     "src": "assets/sakai/IMG_2675.jpg",
-    "dur": 6
+    "dur": 5
   },
   {
     "kind": "photo",
@@ -202,42 +212,53 @@ export const scenes: Scene[] = [
   {
     "kind": "photo",
     "src": "assets/fellows-intl/IMG_4707.jpg",
-    "dur": 5.2
+    "dur": 4.6
   },
   {
     "kind": "photo",
     "src": "assets/collage/13.jpg",
-    "dur": 5.2
+    "dur": 4.6
   },
   {
     "kind": "photo",
     "src": "assets/fellows-intl/IMG_5714.jpg",
-    "dur": 5.2
+    "dur": 4.6
   },
   {
     "kind": "photo",
     "src": "assets/fellows-intl/IMG_9625.jpg",
-    "dur": 5.2
+    "dur": 4.6
   },
   {
     "kind": "photo",
     "src": "assets/collage/12.jpg",
-    "dur": 5.2
+    "dur": 4.6
+  },
+  {
+    "kind": "slide",
+    "src": "assets/addition2/スクリーンショット_2026-07-28_16.17.49.jpg",
+    "dur": 6
   },
   {
     "kind": "photo",
     "src": "assets/fellows-jp/IMG_0088.jpg",
-    "dur": 5.4
+    "dur": 4.6
   },
   {
     "kind": "photo",
     "src": "assets/fellows-jp/IMG_2623.jpg",
-    "dur": 5.4
+    "dur": 4.6
+  },
+  {
+    "kind": "photo",
+    "src": "assets/add/2013年前期後期から斎藤登場.jpg",
+    "dur": 4.6
   },
   {
     "kind": "slide",
     "src": "assets/slides/08-nihon-sekai.jpg",
-    "dur": 5.4
+    "dur": 5.4,
+    "transition": "slide-left"
   },
   {
     "kind": "photo",
@@ -312,7 +333,8 @@ export const scenes: Scene[] = [
   {
     "kind": "slide",
     "src": "assets/slides/09-legacy.jpg",
-    "dur": 6
+    "dur": 6,
+    "transition": "clock"
   },
   {
     "kind": "photo",
@@ -322,7 +344,13 @@ export const scenes: Scene[] = [
   {
     "kind": "slide",
     "src": "assets/slides/10-mirai.jpg",
-    "dur": 6
+    "dur": 6,
+    "transition": "flip"
+  },
+  {
+    "kind": "photo",
+    "src": "assets/addition2/IMG_9982.jpg",
+    "dur": 5
   },
   {
     "kind": "photo",
@@ -333,6 +361,18 @@ export const scenes: Scene[] = [
 
 export const TRANSITION_FRAMES = Math.round(TRANSITION_SEC * FPS);
 export const sceneFrames = (s: Scene) => Math.round(s.dur * FPS);
-export const totalDurationInFrames =
+
+// BGM(audio/party-bgm.m4a)の実測値。
+// ffmpeg -af silencedetect=noise=-50dB で計測:
+//   ファイル尺 306.72秒 / 音楽が鳴り終わるのは 302.47秒(以降は無音)
+export const BGM_DURATION_SEC = 306.72;
+export const BGM_MUSIC_END_SEC = 302.47;
+
+// ムービーの総尺は曲の長さに固定する。写真を足し引きしても尺は変わらない。
+export const totalDurationInFrames = Math.round(BGM_DURATION_SEC * FPS);
+
+// 写真を並べた実際の長さ。totalDurationInFrames とズレていると
+// 末尾が黒くなる(短い)か切れる(長い)ので、update 実行時に警告する。
+export const scenesDurationInFrames =
   scenes.reduce((sum, s) => sum + sceneFrames(s), 0) -
   TRANSITION_FRAMES * (scenes.length - 1);

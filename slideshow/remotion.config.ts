@@ -1,16 +1,9 @@
 import {Config} from '@remotion/cli/config';
-import {existsSync} from 'node:fs';
-import {resolve} from 'node:path';
 
-// メディアファイルの格納場所候補（優先順位順）
-// Dropbox側の「教授就任パーティー用動画」をメディアフォルダ(publicDir)として利用
-const candidatePaths = [
-  'C:/Users/a2189/Dropbox/教授就任パーティー用動画',
-  resolve(__dirname, '../../../../教授就任パーティー用動画'),
-  resolve(__dirname, 'public'),
-];
-const publicDir = candidatePaths.find((p) => existsSync(p)) || resolve(__dirname, 'public');
-Config.setPublicDir(publicDir);
+// Dropbox側の「教授就任パーティー用動画」をメディアフォルダ(publicDir)として利用。
+// 解決ロジックは render スクリプトと共有する（media-dir.cjs 参照）。
+const {mediaDir} = require('./media-dir.cjs') as typeof import('./media-dir.cjs');
+Config.setPublicDir(mediaDir);
 
 
 Config.setVideoImageFormat('jpeg');
@@ -23,12 +16,8 @@ Config.setCrf(23);
 Config.setHardwareAcceleration('if-possible');
 // Chrome側の描画エンジンでもGPU (ANGLE/OpenGL) を強制有効化してレンダリングを高速化
 Config.setChromiumOpenGlRenderer('angle');
-// さらにChromiumのGPUフラグを強制的に有効化し、GPUへの依存度を上げる
-Config.setChromiumFlags([
-  '--ignore-gpu-blocklist',
-  '--enable-gpu-rasterization',
-  '--enable-zero-copy',
-]);
+// 注: 任意のChromiumフラグを渡すAPI (Config.setChromiumFlags) はRemotionに存在しない。
+// GPUラスタライズ等のフラグは setChromiumOpenGlRenderer の指定に応じてRemotion内部で付与される。
 // Studioのタイムライン表示上限(既定90)。シーン64本+トランジション63本+音声で
 // 130本以上になり後半が省略されるため引き上げる。表示だけの設定で書き出しには影響しない。
 Config.setMaxTimelineTracks(200);

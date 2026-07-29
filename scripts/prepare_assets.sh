@@ -1,11 +1,12 @@
 #!/bin/bash
 # 素材前処理: HEIC/heif/tif/avif/png/jpg → JPEG(最大辺1920px)に変換して
-# slideshow/public/assets/ 以下へカテゴリ別(ASCIIスラッグ)に出力する。
-# 再実行可能(変換済みファイルはスキップ)。
+# メディアフォルダの assets/ 以下へカテゴリ別(ASCIIスラッグ)に出力する。
+# 再実行可能(変換済みファイルはスキップ)。sips を使うので macOS 専用。
 set -u
 
-SRC="/Users/taichishimizu/Library/CloudStorage/Dropbox/教授就任パーティー用動画"
-DEST="$(cd "$(dirname "$0")/.." && pwd)/slideshow/public/assets"
+# メディアフォルダの場所は slideshow/media-dir.cjs で一元管理している
+SRC="$(node -p "require('$(cd "$(dirname "$0")/.." && pwd)/slideshow/media-dir.cjs').mediaDir")"
+DEST="$SRC/assets"
 MAXPX=1920
 QUALITY=85
 
@@ -16,6 +17,7 @@ convert_one() { # $1=input $2=outdir
   local base name out
   base="$(basename "$in")"
   name="${base%.*}"
+  name="${name// /_}" # 空白入りのファイル名は staticFile のURLで扱いにくいので _ に置換
   out="$outdir/$name.jpg"
   # 同名異拡張子の衝突回避
   if [ -e "$out" ] && [ -n "$(find "$outdir" -name "$name.jpg" -newer "$in" 2>/dev/null)" ]; then
@@ -65,6 +67,9 @@ convert_dir "若松病院写真/その他"                              "misc"
 convert_dir "若松病院写真/その他/内田先生教授就任パーティー用" "uchida-party"
 convert_dir "若松病院写真/その他/Photos-1-001 (6)"             "misc6"
 convert_dir "若松病院写真/その他/Photos-1-001 (8)"             "misc8"
+
+# --- 後から追加した素材 ---
+convert_dir "addition2" "addition2"
 
 # --- PPTスライド(意味のある名前にリネームして変換) ---
 PPT="$SRC/PPTからの画像"

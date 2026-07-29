@@ -78,10 +78,18 @@ const writeCsv = (file, rows) =>
 // 数式内にカンマを使うと引用符の扱いが面倒なので、四捨五入は INT(x+0.5) で書く。
 const TRANSITION_SEC = 0.7;
 const FPS = 30;
-const CROSSFADE_AT_SEC = 128; // Bgm.tsx と合わせる
+
+// scenes.ts の内部名 → Excelに書く日本語(csv_to_scenes.mjs の TRANSITIONS の逆引き)
+const TRANSITION_LABELS = {
+  'slide-left': 'スライド左', 'slide-right': 'スライド右',
+  'slide-up': 'スライド上', 'slide-down': 'スライド下',
+  'wipe-left': 'ワイプ左', 'wipe-right': 'ワイプ右',
+  'wipe-up': 'ワイプ上', 'wipe-down': 'ワイプ下',
+  flip: 'めくり', clock: '時計', iris: 'アイリス', none: 'なし',
+};
 
 const sceneRows = [
-  ['順番', '種別', 'フォルダ', 'ファイル名', '秒数', 'セピア', 'キャプション', '撮影日時', '開始秒', '開始フレーム', '曲'],
+  ['順番', '種別', 'フォルダ', 'ファイル名', '秒数', 'セピア', 'キャプション', '切り替え', '撮影日時', '開始秒', '開始フレーム'],
 ];
 const usedOrder = new Map(); // "folder/file" -> 順番
 let at = 0;
@@ -98,10 +106,11 @@ scenes.forEach((s, i) => {
     s.dur,
     s.sepia ? 1 : '',
     s.caption ?? '',
+    s.transition ? TRANSITION_LABELS[s.transition] ?? '' : '',
     info.creation,
-    i === 0 ? 0 : {f: `I${row - 1}+E${row - 1}-${TRANSITION_SEC}`, v: Math.round(at * 100) / 100},
-    {f: `INT(I${row}*${FPS}+0.5)`, v: Math.round(at * FPS)},
-    at < CROSSFADE_AT_SEC - 3 ? 'secret base' : at < CROSSFADE_AT_SEC ? '切替中' : 'たしかなこと',
+    // 「切り替え」列を足したぶん、開始秒=J列 / 開始フレーム=K列 に後ろへずれている
+    i === 0 ? 0 : {f: `J${row - 1}+E${row - 1}-${TRANSITION_SEC}`, v: Math.round(at * 100) / 100},
+    {f: `INT(J${row}*${FPS}+0.5)`, v: Math.round(at * FPS)},
   ]);
   at += s.dur - TRANSITION_SEC;
 });
