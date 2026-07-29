@@ -23,6 +23,12 @@ Config.setCrf(23);
 Config.setHardwareAcceleration('if-possible');
 // Chrome側の描画エンジンでもGPU (ANGLE/OpenGL) を強制有効化してレンダリングを高速化
 Config.setChromiumOpenGlRenderer('angle');
+// さらにChromiumのGPUフラグを強制的に有効化し、GPUへの依存度を上げる
+Config.setChromiumFlags([
+  '--ignore-gpu-blocklist',
+  '--enable-gpu-rasterization',
+  '--enable-zero-copy',
+]);
 // Studioのタイムライン表示上限(既定90)。シーン64本+トランジション63本+音声で
 // 130本以上になり後半が省略されるため引き上げる。表示だけの設定で書き出しには影響しない。
 Config.setMaxTimelineTracks(200);
