@@ -1,0 +1,15 @@
+{
+  "name": "kyoju-shunin-movie-scripts",
+  "private": true,
+  "type": "module",
+  "description": "タイムライン管理スクリプト用。ムービー本体は slideshow/ 配下。",
+  "scripts": {
+    "update": "node scripts/update.mjs",
+    "watch": "node scripts/watch.mjs"
+  },
+  "dependencies": {
+    "exifr": "^7.1.3",
+    "image-size": "^2.0.2",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  }
+}

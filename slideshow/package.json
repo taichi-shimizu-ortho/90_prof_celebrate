@@ -1,0 +1,28 @@
+{
+  "name": "kyoju-shunin-slideshow",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render Movie ../../../../教授就任パーティー用動画/output/wakamatsu_movie.mp4 --codec h264 --hardware-acceleration if-possible",
+    "render:hq": "remotion render Movie ../../../../教授就任パーティー用動画/output/wakamatsu_movie_CRF23.mp4 --codec h264 --crf 23 --hardware-acceleration if-possible",
+    "render:line": "ffmpeg -y -i ../../../../教授就任パーティー用動画/output/wakamatsu_movie_CRF23.mp4 -vf scale=1280:-2 -c:v h264_nvenc -rc vbr -cq 30 -b:v 0 -c:a copy ../../../../教授就任パーティー用動画/output/wakamatsu_movie_LINE.mp4",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@remotion/transitions": "^4.0.0",
+    "kyoju-shunin-movie-scripts": "file:..",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.5.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true
+  }
+}
