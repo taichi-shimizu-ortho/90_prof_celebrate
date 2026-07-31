@@ -327,18 +327,28 @@ export const scenes: Scene[] = [
   },
   {
     "kind": "photo",
+    "src": "assets/addition2/IMG_9982.jpg",
+    "dur": 5
+  },
+  {
+    "kind": "photo",
     "src": "assets/group/IMG_5027.jpg",
-    "dur": 5.2
+    "dur": 5
   },
   {
     "kind": "photo",
     "src": "assets/group/IMG_9912.jpg",
-    "dur": 5.2
+    "dur": 5
+  },
+  {
+    "kind": "slide",
+    "src": "assets/add3/FHD_スクリーンショット_2026-08-01_0.23.06.png",
+    "dur": 3.92
   },
   {
     "kind": "slide",
     "src": "assets/slides/09-legacy.jpg",
-    "dur": 6,
+    "dur": 5,
     "transition": "clock"
   },
   {
@@ -354,11 +364,6 @@ export const scenes: Scene[] = [
   },
   {
     "kind": "photo",
-    "src": "assets/addition2/IMG_9982.jpg",
-    "dur": 5
-  },
-  {
-    "kind": "photo",
     "src": "assets/bridge/67021D6A-E5CC-4C5B-8908-07663F03DD2E.jpg",
     "dur": 6
   }
@@ -367,11 +372,16 @@ export const scenes: Scene[] = [
 export const TRANSITION_FRAMES = Math.round(TRANSITION_SEC * FPS);
 export const sceneFrames = (s: Scene) => Math.round(s.dur * FPS);
 
-// BGM(audio/party-bgm.m4a)の実測値。
-// ffmpeg -af silencedetect=noise=-50dB で計測:
-//   ファイル尺 306.72秒 / 音楽が鳴り終わるのは 302.47秒(以降は無音)
-export const BGM_DURATION_SEC = 306.72;
-export const BGM_MUSIC_END_SEC = 302.47;
+// 1曲目「僕らまた」を 最初から 2:32 まで
+export const SONG1_END_SEC = 152;
+
+// 2曲目「たしかなこと」を 2:25 から最後まで
+export const SONG2_START_OFFSET_SEC = 145;
+export const SONG2_ORIGINAL_DURATION_SEC = 301.56;
+export const SONG2_DURATION_SEC = 156.56;
+
+export const BGM_DURATION_SEC = 308.56;
+export const BGM_MUSIC_END_SEC = 304.31;
 
 // ムービーの総尺は曲の長さに固定する。写真を足し引きしても尺は変わらない。
 export const totalDurationInFrames = Math.round(BGM_DURATION_SEC * FPS);

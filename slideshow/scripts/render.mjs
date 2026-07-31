@@ -28,6 +28,11 @@ const run = (cmd, args) => {
   }
 };
 
+// LINE 用の縮小設定。静止画のスライドショーなのでフレームレートを落としても破綻しにくい。
+// (Ken Burns のズームは多少カクつく。滑らかさを優先するならこの値を上げる)
+const LINE_WIDTH = 1280;
+const LINE_FPS = 10;
+
 // LINE 用縮小エンコードのエンコーダ。品質指定は各エンコーダの流儀に合わせる。
 const lineEncoderArgs = () => {
   switch (platform()) {
@@ -73,8 +78,10 @@ switch (target) {
       '-y',
       '-i',
       source,
+      '-t',
+      '300',
       '-vf',
-      'scale=1280:-2',
+      `scale=${LINE_WIDTH}:-2,fps=${LINE_FPS}`,
       ...lineEncoderArgs(),
       '-c:a',
       'copy',
