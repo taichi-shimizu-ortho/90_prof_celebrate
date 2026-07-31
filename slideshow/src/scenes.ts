@@ -1,4 +1,4 @@
-// 自動生成: scripts/csv_to_scenes.mjs (2026-07-29)
+// 自動生成: scripts/csv_to_scenes.mjs (2026-07-31)
 // 並び替え・差し替えは scenes.csv を編集して node scripts/csv_to_scenes.mjs を実行。
 // 切り替えの種類。シェーダー系(dissolve/film-burn/ripple 等)は HTML-in-Canvas API が
 // 必要で実行時に落ちるため、ここには含めていない。
@@ -28,7 +28,7 @@ export const scenes: Scene[] = [
   {
     "kind": "photo",
     "src": "assets/addition2/IMG_6266.jpg",
-    "dur": 5
+    "dur": 4.4
   },
   {
     "kind": "slide",
@@ -38,33 +38,33 @@ export const scenes: Scene[] = [
   {
     "kind": "photo",
     "src": "assets/collage/16.jpg",
-    "dur": 5
+    "dur": 4.4
   },
   {
     "kind": "slide",
     "src": "assets/add/3開院.jpg",
-    "dur": 5
+    "dur": 4.4
   },
   {
     "kind": "slide",
     "src": "assets/slides/04-kono-hi-kara.jpg",
-    "dur": 5
+    "dur": 4.4
   },
   {
     "kind": "photo",
     "src": "assets/add/2015三月.jpg",
-    "dur": 5,
+    "dur": 4.4,
     "sepia": true
   },
   {
     "kind": "slide",
     "src": "assets/slides/03-kaiin-toji.jpg",
-    "dur": 5
+    "dur": 4.4
   },
   {
     "kind": "photo",
     "src": "assets/add/2015年前期.jpg",
-    "dur": 5
+    "dur": 4.4
   },
   {
     "kind": "slide",
@@ -74,7 +74,7 @@ export const scenes: Scene[] = [
   {
     "kind": "photo",
     "src": "assets/history/9be842d9.jpg",
-    "dur": 5,
+    "dur": 4.49,
     "sepia": true
   },
   {
@@ -293,6 +293,11 @@ export const scenes: Scene[] = [
   {
     "kind": "photo",
     "src": "assets/collage/14.jpg",
+    "dur": 5.4
+  },
+  {
+    "kind": "slide",
+    "src": "assets/add3/cert_out1.jpg",
     "dur": 5.4
   },
   {
