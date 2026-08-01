@@ -1,4 +1,4 @@
-// 自動生成: scripts/csv_to_scenes.mjs (2026-07-31)
+// 自動生成: scripts/csv_to_scenes.mjs (2026-08-01)
 // 並び替え・差し替えは scenes.csv を編集して node scripts/csv_to_scenes.mjs を実行。
 // 切り替えの種類。シェーダー系(dissolve/film-burn/ripple 等)は HTML-in-Canvas API が
 // 必要で実行時に落ちるため、ここには含めていない。
@@ -38,33 +38,33 @@ export const scenes: Scene[] = [
   {
     "kind": "photo",
     "src": "assets/collage/16.jpg",
-    "dur": 4.4
+    "dur": 4
   },
   {
     "kind": "slide",
     "src": "assets/add/3開院.jpg",
-    "dur": 4.4
+    "dur": 4
   },
   {
     "kind": "slide",
     "src": "assets/slides/04-kono-hi-kara.jpg",
-    "dur": 4.4
+    "dur": 4
   },
   {
     "kind": "photo",
     "src": "assets/add/2015三月.jpg",
-    "dur": 4.4,
+    "dur": 4,
     "sepia": true
   },
   {
     "kind": "slide",
     "src": "assets/slides/03-kaiin-toji.jpg",
-    "dur": 4.4
+    "dur": 4
   },
   {
     "kind": "photo",
     "src": "assets/add/2015年前期.jpg",
-    "dur": 4.4
+    "dur": 4
   },
   {
     "kind": "slide",
@@ -74,18 +74,18 @@ export const scenes: Scene[] = [
   {
     "kind": "photo",
     "src": "assets/history/9be842d9.jpg",
-    "dur": 4.49,
+    "dur": 4,
     "sepia": true
   },
   {
     "kind": "photo",
     "src": "assets/add/IMG_2374.jpg",
-    "dur": 5
+    "dur": 4
   },
   {
     "kind": "slide",
     "src": "assets/slides/05-manabiya-title.jpg",
-    "dur": 5,
+    "dur": 4,
     "transition": "iris"
   },
   {
@@ -145,11 +145,6 @@ export const scenes: Scene[] = [
   },
   {
     "kind": "photo",
-    "src": "assets/gairai/IMG_0403.jpg",
-    "dur": 5
-  },
-  {
-    "kind": "photo",
     "src": "assets/gairai/IMG_3154.jpg",
     "dur": 5
   },
@@ -157,11 +152,6 @@ export const scenes: Scene[] = [
     "kind": "photo",
     "src": "assets/byoto/IMG_9875.jpg",
     "dur": 5
-  },
-  {
-    "kind": "photo",
-    "src": "assets/ikyoku/IMG_0108.jpg",
-    "dur": 3.42
   },
   {
     "kind": "photo",
@@ -178,11 +168,6 @@ export const scenes: Scene[] = [
     "kind": "photo",
     "src": "assets/sakai/IMG_2675.jpg",
     "dur": 5
-  },
-  {
-    "kind": "photo",
-    "src": "assets/running/IMG_0015.jpg",
-    "dur": 6
   },
   {
     "kind": "slide",
@@ -312,11 +297,6 @@ export const scenes: Scene[] = [
   },
   {
     "kind": "photo",
-    "src": "assets/bridge/120167_b19cd8fb0ec04df0aba8215e1acad532~mv2.jpg.jpg",
-    "dur": 5.2
-  },
-  {
-    "kind": "photo",
     "src": "assets/group/IMG_1252.jpg",
     "dur": 5.2
   },
@@ -359,7 +339,7 @@ export const scenes: Scene[] = [
   {
     "kind": "slide",
     "src": "assets/slides/10-mirai.jpg",
-    "dur": 6,
+    "dur": 4.17,
     "transition": "flip"
   },
   {
@@ -372,16 +352,9 @@ export const scenes: Scene[] = [
 export const TRANSITION_FRAMES = Math.round(TRANSITION_SEC * FPS);
 export const sceneFrames = (s: Scene) => Math.round(s.dur * FPS);
 
-// 1曲目「僕らまた」を 最初から 2:32 まで
-export const SONG1_END_SEC = 152;
-
-// 2曲目「たしかなこと」を 2:25 から最後まで
-export const SONG2_START_OFFSET_SEC = 145;
-export const SONG2_ORIGINAL_DURATION_SEC = 301.56;
-export const SONG2_DURATION_SEC = 156.56;
-
-export const BGM_DURATION_SEC = 308.56;
-export const BGM_MUSIC_END_SEC = 304.31;
+// 新しい音源（4分45秒 = 285秒）
+export const BGM_DURATION_SEC = 285;
+export const BGM_MUSIC_END_SEC = 282;
 
 // ムービーの総尺は曲の長さに固定する。写真を足し引きしても尺は変わらない。
 export const totalDurationInFrames = Math.round(BGM_DURATION_SEC * FPS);

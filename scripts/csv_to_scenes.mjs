@@ -15,16 +15,9 @@ XLSX.set_fs(fs); // ESM版はfsを明示的に渡さないと readFile/writeFile
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 import {assetsDir as assets} from './media_config.mjs';
 
-// 1曲目「僕らまた」を 最初から 2:32 まで
-const SONG1_END_SEC = 152; 
-
-// 2曲目「たしかなこと」を 2:25 から最後まで
-const SONG2_START_OFFSET_SEC = 145;
-const SONG2_ORIGINAL_DURATION_SEC = 301.56;
-const SONG2_DURATION_SEC = SONG2_ORIGINAL_DURATION_SEC - SONG2_START_OFFSET_SEC;
-
-const BGM_DURATION_SEC = SONG1_END_SEC + SONG2_DURATION_SEC;
-const BGM_MUSIC_END_SEC = BGM_DURATION_SEC - 4.25;
+// 結合済みの新しい音源を使用 (4分45秒 = 285秒)
+const BGM_DURATION_SEC = 285.0;
+const BGM_MUSIC_END_SEC = 285.0 - 3.0;
 
 // --- 最小限のCSVパーサ(引用符・改行・CRLF・BOM対応) ---
 const parseCsv = (text) => {
@@ -167,14 +160,7 @@ const footerTs = `;
 export const TRANSITION_FRAMES = Math.round(TRANSITION_SEC * FPS);
 export const sceneFrames = (s: Scene) => Math.round(s.dur * FPS);
 
-// 1曲目「僕らまた」を 最初から 2:32 まで
-export const SONG1_END_SEC = ${SONG1_END_SEC};
-
-// 2曲目「たしかなこと」を 2:25 から最後まで
-export const SONG2_START_OFFSET_SEC = ${SONG2_START_OFFSET_SEC};
-export const SONG2_ORIGINAL_DURATION_SEC = ${SONG2_ORIGINAL_DURATION_SEC};
-export const SONG2_DURATION_SEC = ${SONG2_DURATION_SEC};
-
+// 新しい音源（4分45秒 = 285秒）
 export const BGM_DURATION_SEC = ${BGM_DURATION_SEC};
 export const BGM_MUSIC_END_SEC = ${BGM_MUSIC_END_SEC};
 
